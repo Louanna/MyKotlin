@@ -1,7 +1,6 @@
 package com.kotlin.sample
 
 import android.Manifest
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -9,24 +8,14 @@ import android.util.Log
 import com.example.android.observability.ui.UserViewModel
 import com.example.android.observability.ui.ViewModelFactory
 import com.kotlin.sample.application.MyApplication
-import com.kotlin.sample.helper.SPHelper
-import com.kotlin.sample.sensor.SensorLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import android.animation.ValueAnimator
-import android.support.v4.view.ViewCompat.setTranslationX
-import android.R.attr.animation
-import android.animation.ObjectAnimator
-import android.animation.AnimatorSet
-import android.animation.PropertyValuesHolder
-import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
-import android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-import android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+import android.content.Intent
 import android.os.Build
 import android.view.View
-import com.kotlin.sample.location.LocationLiveData
+import com.kotlin.sample.service.LocationService
 import com.kotlin.sample.utils.PermissionUtils
 
 
@@ -50,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         viewModelFactory = Injection.provideViewModelFactory(this)
         mViewModel = ViewModelProviders.of(this, viewModelFactory).get(UserViewModel::class.java)
 
-//        SensorLiveData().observe(this, Observer {
+//        SensorLiveData.getInstance().observe(this, Observer {
 //            for (item: Float in it!!.asIterable())
 //                Log.d("debug", "${item}")
 //        })
@@ -85,17 +74,46 @@ class MainActivity : AppCompatActivity() {
 
         PermissionUtils.requestPermission(this, object : PermissionUtils.PermissionsCallback {
             override fun onSuccess() {
-                Log.d("debug", "onSuccess")
+//                LocationLiveData.getInstance().observe(this@MainActivity, Observer {
+//                    Log.d("debug", "it=" + "${it.toString()}")
+//                })
 
-
+                startLocationService()
             }
         }, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION)
 
-        LocationLiveData.getInstance().observe(this, Observer {
+//        var xmlManager = XMLManager()
+//        var xmlData = xmlManager.getData(this)
+//        for (data in xmlData) {
+//            for (key in data.keys) {
+//                Log.d("debug", "value=" + data.get(key))
+//            }
+//        }
 
-            Log.d("debug", "it=" + "${it.toString()}")
-        })
+    }
+
+    override fun onDestroy() {
+        stopLocationService()
+        super.onDestroy()
+    }
+
+    private var myService: Intent? = null
+
+    fun startLocationService() {
+        myService = Intent(MyApplication.context, LocationService::class.java)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            MyApplication.context.startForegroundService(myService)
+        } else {
+            MyApplication.context.startService(myService)
+        }
+    }
+
+    private fun stopLocationService() {
+        if (null != myService) {
+            MyApplication.context.stopService(myService)
+        }
     }
 
     fun hideBottomUIMenu() {

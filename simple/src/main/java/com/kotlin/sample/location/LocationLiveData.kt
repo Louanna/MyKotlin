@@ -57,9 +57,17 @@ class LocationLiveData : LiveData<Location> {
     private constructor()
 
     override fun onActive() {
-        if (ActivityCompat.checkSelfPermission(Companion.mContext,
+        registeredListener()
+    }
+
+    override fun onInactive() {
+        removeListener()
+    }
+
+    fun registeredListener() {
+        if (ActivityCompat.checkSelfPermission(mContext,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(Companion.mContext,
+                && ActivityCompat.checkSelfPermission(mContext,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
         }
@@ -80,7 +88,7 @@ class LocationLiveData : LiveData<Location> {
         }
     }
 
-    override fun onInactive() {
+    fun removeListener() {
         mLocationManager.removeUpdates(listener)
     }
 

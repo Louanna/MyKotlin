@@ -29,6 +29,14 @@ class SensorLiveData : LiveData<FloatArray>() {
             mGyroscopeSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
             mBarometricSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE)
         }
+
+        private var sensorLiveData: SensorLiveData? = null
+        fun getInstance(): SensorLiveData {
+            if (null == sensorLiveData) {
+                sensorLiveData = SensorLiveData()
+            }
+            return sensorLiveData!!
+        }
     }
 
     private val myListener = object : SensorEventListener {

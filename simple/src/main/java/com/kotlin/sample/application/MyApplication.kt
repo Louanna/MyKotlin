@@ -21,14 +21,14 @@ import java.util.logging.Level
 class MyApplication : MultiDexApplication() {
 
     companion object {
-        lateinit var instance : Context
+        lateinit var context: Context
         private set
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        instance = applicationContext
+        context = applicationContext
 
         SPHelper.initialization(applicationContext)
         SensorLiveData.initialization(applicationContext)
