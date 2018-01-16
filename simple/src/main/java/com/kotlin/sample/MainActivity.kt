@@ -1,5 +1,6 @@
 package com.kotlin.sample
 
+import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
@@ -25,6 +26,8 @@ import android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
 import android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 import android.os.Build
 import android.view.View
+import com.kotlin.sample.location.LocationLiveData
+import com.kotlin.sample.utils.PermissionUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -74,14 +77,28 @@ class MainActivity : AppCompatActivity() {
 //        animSetXY.playTogether(animX, animY)
 //        animSetXY.start()
 
-        val pvhX = PropertyValuesHolder.ofFloat("x", 50f)
-        val pvhY = PropertyValuesHolder.ofFloat("y", 100f)
-        ObjectAnimator.ofPropertyValuesHolder(tv_name, pvhX, pvhY).start()
+//        val pvhX = PropertyValuesHolder.ofFloat("x", 50f)
+//        val pvhY = PropertyValuesHolder.ofFloat("y", 100f)
+//        ObjectAnimator.ofPropertyValuesHolder(tv_name, pvhX, pvhY).start()
 
 //        hideBottomUIMenu()
+
+        PermissionUtils.requestPermission(this, object : PermissionUtils.PermissionsCallback {
+            override fun onSuccess() {
+                Log.d("debug", "onSuccess")
+
+
+            }
+        }, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        LocationLiveData.getInstance().observe(this, Observer {
+
+            Log.d("debug", "it=" + "${it.toString()}")
+        })
     }
 
-    protected fun hideBottomUIMenu() {
+    fun hideBottomUIMenu() {
         if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
             // lower api
             val v = this.window.decorView

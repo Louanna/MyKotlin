@@ -3,6 +3,7 @@ package com.kotlin.sample.application
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.kotlin.sample.helper.SPHelper
+import com.kotlin.sample.location.LocationLiveData
 import com.kotlin.sample.sensor.SensorLiveData
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.cache.CacheEntity
@@ -31,6 +32,7 @@ class MyApplication : MultiDexApplication() {
 
         SPHelper.initialization(applicationContext)
         SensorLiveData.initialization(applicationContext)
+        LocationLiveData.initialization(applicationContext)
 
         integrateOKGO()
     }

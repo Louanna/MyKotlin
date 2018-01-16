@@ -10,8 +10,8 @@ import com.tbruyelle.rxpermissions2.RxPermissions
  */
 object PermissionUtils {
 
-    fun requestPermission(activity: Activity, vararg permission: String,
-                          callback: PermissionsCallback) {
+    fun requestPermission(activity: Activity, callback: PermissionsCallback,
+                          vararg permission: String) {
         RxPermissions(activity)
                 .request(*permission)
                 .subscribe({ aBoolean ->
@@ -25,15 +25,13 @@ object PermissionUtils {
                 })
     }
 
-    fun requestPermission(activity: Activity, view: View, vararg permission: String,
-                          callback: PermissionsCallback) {
+    fun requestPermission(activity: Activity, view: View, callback: PermissionsCallback,
+                          vararg permission: String) {
         RxView.clicks(view)
                 .compose(RxPermissions(activity).ensureEach(*permission))
                 .subscribe({ permission ->
                     if (permission.granted) {
-
                         callback.onSuccess()
-
                     } else if (permission.shouldShowRequestPermissionRationale) {
                         // Denied permission without ask never again
                         AppUtils.showSnackbar(view, "Denied permission without ask never again",
