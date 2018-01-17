@@ -1,29 +1,29 @@
 package com.kotlin.sample.persistence
 
 import com.example.android.observability.persistence.User
-import com.example.android.observability.persistence.UserDao
+import com.example.android.observability.persistence.IUserDao
 import io.reactivex.Flowable
 
 /**
  * Created by anna on 2017/12/13.
  */
-class LocalUserDataSource : UserDataSource {
+class UserDataSource : IUserDataSource {
 
-    private var mUserDao: UserDao
+    private var mIUserDao: IUserDao
 
-    constructor(mUserDao: UserDao) {
-        this.mUserDao = mUserDao
+    constructor(userDao: IUserDao) {
+        this.mIUserDao = userDao
     }
 
     override fun getUserById(id: String): Flowable<User> {
-        return mUserDao.getUserById(id)
+        return mIUserDao.getUserById(id)
     }
 
     override fun insertOrUpdateUser(user: User) {
-        mUserDao.insertUser(user)
+        mIUserDao.insertUser(user)
     }
 
     override fun deleteAllUsers() {
-        mUserDao.deleteAllUsers()
+        mIUserDao.deleteAllUsers()
     }
 }

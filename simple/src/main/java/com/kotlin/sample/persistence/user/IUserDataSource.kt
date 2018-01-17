@@ -6,7 +6,7 @@ import io.reactivex.Flowable
 /**
  * Created by anna on 2017/12/13.
  */
-interface UserDataSource {
+interface IUserDataSource {
 
     fun getUserById(id: String): Flowable<User>
 

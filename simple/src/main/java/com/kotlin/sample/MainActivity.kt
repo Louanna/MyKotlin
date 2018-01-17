@@ -1,12 +1,11 @@
 package com.kotlin.sample
 
-import android.Manifest
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.example.android.observability.ui.UserViewModel
-import com.example.android.observability.ui.ViewModelFactory
+import com.example.android.observability.ui.VMUser
+import com.example.android.observability.ui.VMFactory
 import com.kotlin.sample.application.MyApplication
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -15,16 +14,85 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
 import android.os.Build
 import android.view.View
+import com.kotlin.sample.ui.Injection
 import com.kotlin.sample.service.LocationService
-import com.kotlin.sample.utils.PermissionUtils
-
+import com.kotlin.sample.ui.VMAddress
+import com.kotlin.sample.ui.VMBook
 
 class MainActivity : AppCompatActivity() {
 
     private val mDisposable = CompositeDisposable()
 
-    private lateinit var mViewModel: UserViewModel
-    private lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var mVMUser: VMUser
+    private lateinit var mVMAddress: VMAddress
+    private lateinit var mVMBook: VMBook
+    private lateinit var VMFactory: VMFactory
+
+    private fun updateUserName() {
+        val userName = et_name.text.toString()
+        bt_save.isEnabled = false
+        mDisposable.add(mVMUser.updateUserName(userName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ bt_save.isEnabled = true },
+                        { throwable -> Log.e(TAG, "Unable to update username", throwable) }))
+    }
+
+    private fun getUser() {
+        bt_save.isEnabled = false
+        mDisposable.add(mVMUser.getUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ user ->
+                    bt_save.isEnabled = true
+                    Log.e(TAG, "user=" + user.toString())
+                }, { throwable -> Log.e(TAG, "Unable to get user", throwable) }))
+    }
+
+    private fun getAddress() {
+        bt_save.isEnabled = false
+        mDisposable.add(mVMAddress.getAllAddress()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ address ->
+                    bt_save.isEnabled = true
+                    Log.e(TAG, "address=" + address.toString())
+                }, { throwable -> Log.e(TAG, "Unable to get address", throwable) }))
+    }
+
+    private fun insertAddress() {
+        bt_save.isEnabled = false
+        mDisposable.add(mVMAddress.insertAddress()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    bt_save.isEnabled = true
+                    Log.e(TAG, "success=")
+                }, { throwable -> Log.e(TAG, "Unable to insert address", throwable) }))
+    }
+
+    private fun insertBook() {
+        bt_save.isEnabled = false
+        mDisposable.add(mVMBook.insertBook()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    bt_save.isEnabled = true
+                    Log.e(TAG, "insert book success")
+                }, { throwable -> Log.e(TAG, "Unable to insert book", throwable) }))
+    }
+
+    private fun getAllBook() {
+        bt_save.isEnabled = false
+        mDisposable.add(mVMBook.getAllBook()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ books ->
+                    bt_save.isEnabled = true
+                    Log.e(TAG, "size=" + books.size)
+                    Log.e(TAG, "books=" + books.toString())
+                }, { throwable -> Log.e(TAG, "Unable to get book", throwable) }))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +101,18 @@ class MainActivity : AppCompatActivity() {
         tv_name.text = "abc"
 
         bt_save.setOnClickListener {
-            updateUserName()
+            //            updateUserName()
+//            getUser()
+//            getAddress()
+//            insertAddress()
+//            insertBook()
+            getAllBook()
         }
 
-        viewModelFactory = Injection.provideViewModelFactory(this)
-        mViewModel = ViewModelProviders.of(this, viewModelFactory).get(UserViewModel::class.java)
+        VMFactory = Injection.provideViewModelFactory(this)
+        mVMUser = ViewModelProviders.of(this, VMFactory).get(VMUser::class.java)
+        mVMAddress = ViewModelProviders.of(this, VMFactory).get(VMAddress::class.java)
+        mVMBook = ViewModelProviders.of(this, VMFactory).get(VMBook::class.java)
 
 //        SensorLiveData.getInstance().observe(this, Observer {
 //            for (item: Float in it!!.asIterable())
@@ -72,16 +147,16 @@ class MainActivity : AppCompatActivity() {
 
 //        hideBottomUIMenu()
 
-        PermissionUtils.requestPermission(this, object : PermissionUtils.PermissionsCallback {
-            override fun onSuccess() {
-//                LocationLiveData.getInstance().observe(this@MainActivity, Observer {
-//                    Log.d("debug", "it=" + "${it.toString()}")
-//                })
-
-                startLocationService()
-            }
-        }, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
+//        PermissionUtils.requestPermission(this, object : PermissionUtils.PermissionsCallback {
+//            override fun onSuccess() {
+////                LocationLiveData.getInstance().observe(this@MainActivity, Observer {
+////                    Log.d("debug", "it=" + "${it.toString()}")
+////                })
+//
+//                startLocationService()
+//            }
+//        }, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_FINE_LOCATION,
+//                Manifest.permission.ACCESS_COARSE_LOCATION)
 
 //        var xmlManager = XMLManager()
 //        var xmlData = xmlManager.getData(this)
@@ -132,7 +207,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        mDisposable.add(mViewModel.getUserName()
+        mDisposable.add(mVMUser.getUserName()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ this.tv_name.text = it },
@@ -142,16 +217,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         mDisposable.clear()
-    }
-
-    private fun updateUserName() {
-        val userName = et_name.text.toString()
-        bt_save.isEnabled = false
-        mDisposable.add(mViewModel.updateUserName(userName)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ bt_save.isEnabled = true },
-                        { throwable -> Log.e(TAG, "Unable to update username", throwable) }))
     }
 
     companion object {

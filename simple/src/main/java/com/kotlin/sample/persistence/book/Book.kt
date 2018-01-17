@@ -1,4 +1,4 @@
-package com.kotlin.sample.persistence
+package com.kotlin.sample.persistence.book
 
 import android.arch.persistence.room.*
 import com.example.android.observability.persistence.User
@@ -9,10 +9,17 @@ import com.example.android.observability.persistence.User
 @Entity(tableName = "book", foreignKeys = arrayOf(ForeignKey(entity = User::class,
         parentColumns = arrayOf("id"), childColumns = arrayOf("user_id"))),
         indices = arrayOf(Index(value = *arrayOf("user_id", "book_id"))))
-data class Book(@PrimaryKey
-                @ColumnInfo(name = "book_id")
-                var bookId: Int = 0,
-                var title: String,
-                @ColumnInfo(name = "user_id")
-                var userId: Int = 0
-)
+data class Book(
+        var title: String,
+        @ColumnInfo(name = "user_id")
+        var userId: String = "") {
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "book_id")
+    var bookId: Long = 0
+
+    override fun toString(): String {
+        return "bookId=  $bookId title=  $title"
+    }
+
+}
