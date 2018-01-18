@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import com.example.android.observability.persistence.User
 import com.kotlin.sample.persistence.IUserDataSource
 import com.kotlin.sample.persistence.address.Address
+import com.kotlin.sample.persistence.user.UserAndBook
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
@@ -31,6 +32,10 @@ class VMUser(private val dataSource: IUserDataSource) : ViewModel() {
 
     fun getUser(): Flowable<User> {
         return dataSource.getUserById("1")
+    }
+
+    fun loadUserAndBook(): Flowable<List<UserAndBook>> {
+        return dataSource.loadUserAndBook()
     }
 
     companion object {

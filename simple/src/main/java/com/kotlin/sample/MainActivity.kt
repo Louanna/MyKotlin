@@ -94,6 +94,19 @@ class MainActivity : AppCompatActivity() {
                 }, { throwable -> Log.e(TAG, "Unable to get book", throwable) }))
     }
 
+    private fun loadUserAndBook() {
+        bt_save.isEnabled = false
+        mDisposable.add(mVMUser.loadUserAndBook()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ books ->
+                    bt_save.isEnabled = true
+                    Log.e(TAG, "size=" + books.size)
+                    Log.e(TAG, "books=" + books.toString())
+                    Log.e(TAG, "books=" + books.get(0).books.toString())
+                }, { throwable -> Log.e(TAG, "Unable to get book", throwable) }))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -106,7 +119,7 @@ class MainActivity : AppCompatActivity() {
 //            getAddress()
 //            insertAddress()
 //            insertBook()
-            getAllBook()
+            loadUserAndBook()
         }
 
         VMFactory = Injection.provideViewModelFactory(this)

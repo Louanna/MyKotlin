@@ -2,6 +2,7 @@ package com.kotlin.sample.persistence
 
 import com.example.android.observability.persistence.User
 import com.example.android.observability.persistence.IUserDao
+import com.kotlin.sample.persistence.user.UserAndBook
 import io.reactivex.Flowable
 
 /**
@@ -25,5 +26,9 @@ class UserDataSource : IUserDataSource {
 
     override fun deleteAllUsers() {
         mIUserDao.deleteAllUsers()
+    }
+
+    override fun loadUserAndBook(): Flowable<List<UserAndBook>> {
+        return mIUserDao.loadUserAndBook()
     }
 }

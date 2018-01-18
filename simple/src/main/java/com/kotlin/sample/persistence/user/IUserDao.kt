@@ -6,6 +6,7 @@ import io.reactivex.Flowable
 import android.arch.persistence.room.Update
 import com.kotlin.sample.persistence.user.NameTuple
 import android.arch.lifecycle.LiveData
+import com.kotlin.sample.persistence.user.UserAndBook
 
 /**
  * Created by anna on 2017/12/13.
@@ -42,5 +43,8 @@ interface IUserDao {
 
     @Query("SELECT first_name, last_name FROM users WHERE first_name IN (:firstName)")
     fun loadUsersFromRegionsSync(firstName: List<String>): LiveData<List<NameTuple>>
+
+    @Query("SELECT id, name from users")
+    fun loadUserAndBook(): Flowable<List<UserAndBook>>
 
 }
