@@ -1,4 +1,4 @@
-package com.kotlin.sample.ui
+package com.kotlin.sample.viewmodel
 
 import android.content.Context
 import com.example.android.observability.persistence.MyDatabase

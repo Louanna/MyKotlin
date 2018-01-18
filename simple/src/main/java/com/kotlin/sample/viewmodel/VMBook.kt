@@ -1,4 +1,4 @@
-package com.kotlin.sample.ui
+package com.kotlin.sample.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import android.arch.persistence.room.Transaction
@@ -6,7 +6,6 @@ import android.util.Log
 import com.example.android.observability.persistence.User
 import com.example.android.observability.ui.VMUser
 import com.kotlin.sample.persistence.IUserDataSource
-import com.kotlin.sample.persistence.address.Address
 import com.kotlin.sample.persistence.book.Book
 import com.kotlin.sample.persistence.book.IBookDataSource
 import io.reactivex.Completable

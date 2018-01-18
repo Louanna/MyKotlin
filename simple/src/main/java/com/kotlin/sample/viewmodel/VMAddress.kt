@@ -1,4 +1,4 @@
-package com.kotlin.sample.ui
+package com.kotlin.sample.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import com.kotlin.sample.persistence.address.Address

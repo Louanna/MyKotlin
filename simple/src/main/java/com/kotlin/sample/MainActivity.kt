@@ -1,5 +1,6 @@
 package com.kotlin.sample
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -14,10 +15,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
 import android.os.Build
 import android.view.View
-import com.kotlin.sample.ui.Injection
+import com.kotlin.sample.helper.SPHelper
+import com.kotlin.sample.viewmodel.Injection
 import com.kotlin.sample.service.LocationService
-import com.kotlin.sample.ui.VMAddress
-import com.kotlin.sample.ui.VMBook
+import com.kotlin.sample.viewmodel.VMAddress
+import com.kotlin.sample.viewmodel.VMApp
+import com.kotlin.sample.viewmodel.VMBook
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +29,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mVMUser: VMUser
     private lateinit var mVMAddress: VMAddress
     private lateinit var mVMBook: VMBook
-    private lateinit var VMFactory: VMFactory
+    private lateinit var mVMApp: VMApp
+    private lateinit var mVMFactory: VMFactory
 
     private fun updateUserName() {
         val userName = et_name.text.toString()
@@ -107,6 +111,11 @@ class MainActivity : AppCompatActivity() {
                 }, { throwable -> Log.e(TAG, "Unable to get book", throwable) }))
     }
 
+    private fun jumpToUserActivity() {
+        var intent = Intent(this, UserActivity::class.java)
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -119,13 +128,22 @@ class MainActivity : AppCompatActivity() {
 //            getAddress()
 //            insertAddress()
 //            insertBook()
-            loadUserAndBook()
+//            loadUserAndBook()
+
+            VMApp.showNightView!!.value = true
+            SPHelper.setBoolean("showNightView", VMApp.showNightView!!.value)
+            jumpToUserActivity()
         }
 
-        VMFactory = Injection.provideViewModelFactory(this)
-        mVMUser = ViewModelProviders.of(this, VMFactory).get(VMUser::class.java)
-        mVMAddress = ViewModelProviders.of(this, VMFactory).get(VMAddress::class.java)
-        mVMBook = ViewModelProviders.of(this, VMFactory).get(VMBook::class.java)
+        mVMFactory = Injection.provideViewModelFactory(this)
+        mVMUser = ViewModelProviders.of(this, mVMFactory).get(VMUser::class.java)
+        mVMAddress = ViewModelProviders.of(this, mVMFactory).get(VMAddress::class.java)
+        mVMBook = ViewModelProviders.of(this, mVMFactory).get(VMBook::class.java)
+        mVMApp = ViewModelProviders.of(this, mVMFactory).get(VMApp::class.java)
+
+        mVMApp.isShowNightView().observe(this, Observer { isShow ->
+            Log.d("debug", "MisShow=" + isShow)
+        })
 
 //        SensorLiveData.getInstance().observe(this, Observer {
 //            for (item: Float in it!!.asIterable())
@@ -178,7 +196,6 @@ class MainActivity : AppCompatActivity() {
 //                Log.d("debug", "value=" + data.get(key))
 //            }
 //        }
-
     }
 
     override fun onDestroy() {
