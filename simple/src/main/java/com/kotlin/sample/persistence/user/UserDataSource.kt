@@ -1,7 +1,9 @@
 package com.kotlin.sample.persistence
 
+import android.arch.lifecycle.LiveData
 import com.example.android.observability.persistence.User
 import com.example.android.observability.persistence.IUserDao
+import com.kotlin.sample.persistence.user.NameTuple
 import com.kotlin.sample.persistence.user.UserAndBook
 import io.reactivex.Flowable
 
@@ -30,5 +32,9 @@ class UserDataSource : IUserDataSource {
 
     override fun loadUserAndBook(): Flowable<List<UserAndBook>> {
         return mIUserDao.loadUserAndBook()
+    }
+
+    override fun loadUsersFromRegionsSync(firstName: List<String>): LiveData<List<NameTuple>> {
+        return mIUserDao.loadUsersFromRegionsSync(firstName)
     }
 }

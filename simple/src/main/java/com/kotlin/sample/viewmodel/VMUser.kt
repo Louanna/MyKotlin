@@ -1,9 +1,11 @@
 package com.example.android.observability.ui
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import com.example.android.observability.persistence.User
 import com.kotlin.sample.persistence.IUserDataSource
 import com.kotlin.sample.persistence.address.Address
+import com.kotlin.sample.persistence.user.NameTuple
 import com.kotlin.sample.persistence.user.UserAndBook
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -23,6 +25,8 @@ class VMUser(private val dataSource: IUserDataSource) : ViewModel() {
     fun updateUserName(userName: String): Completable {
         return Completable.fromAction {
             val user = User(USER_ID, userName)
+            user.firstName = "firstName1"
+            user.lastName = "lastName1"
             val address = Address(ADDRESS_ID, "street1", "state1", "city1", "215000")
             address.userId = USER_ID
             user.address = address
@@ -36,6 +40,10 @@ class VMUser(private val dataSource: IUserDataSource) : ViewModel() {
 
     fun loadUserAndBook(): Flowable<List<UserAndBook>> {
         return dataSource.loadUserAndBook()
+    }
+
+    fun loadUsersFromRegionsSync(firstName: List<String>): LiveData<List<NameTuple>> {
+        return dataSource.loadUsersFromRegionsSync(firstName)
     }
 
     companion object {

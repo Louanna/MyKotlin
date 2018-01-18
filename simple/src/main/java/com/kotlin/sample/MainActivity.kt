@@ -111,6 +111,22 @@ class MainActivity : AppCompatActivity() {
                 }, { throwable -> Log.e(TAG, "Unable to get book", throwable) }))
     }
 
+    private fun loadUsersFromRegionsSync() {
+        bt_save.isEnabled = false
+
+        var firstNameList: List<String> = arrayListOf("firstName1")
+
+        mVMUser.loadUsersFromRegionsSync(firstNameList).observe(this, Observer { nameTupleList ->
+            bt_save.isEnabled = true
+            Log.e(TAG, "size=" + nameTupleList!!.size)
+
+            for (nameTuple in nameTupleList) {
+                Log.e(TAG, "firstName=" + nameTuple.firstName)
+                Log.e(TAG, "lastName=" + nameTuple.lastName)
+            }
+        })
+    }
+
     private fun jumpToUserActivity() {
         var intent = Intent(this, UserActivity::class.java)
         startActivity(intent)
@@ -129,10 +145,11 @@ class MainActivity : AppCompatActivity() {
 //            insertAddress()
 //            insertBook()
 //            loadUserAndBook()
+            loadUsersFromRegionsSync()
 
-            VMApp.showNightView!!.value = true
-            SPHelper.setBoolean("showNightView", VMApp.showNightView!!.value)
-            jumpToUserActivity()
+//            VMApp.showNightView!!.value = true
+//            SPHelper.setBoolean("showNightView", VMApp.showNightView!!.value)
+//            jumpToUserActivity()
         }
 
         mVMFactory = Injection.provideViewModelFactory(this)
