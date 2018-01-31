@@ -5,5 +5,5 @@ package com.kotlin.sample;
  */
 
 public class Test {
-    //Test Account
+    //Test Account Name
 }
