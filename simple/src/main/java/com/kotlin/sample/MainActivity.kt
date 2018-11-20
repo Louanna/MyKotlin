@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.example.android.observability.ui.VMUser
 import com.example.android.observability.ui.VMFactory
 import com.kotlin.sample.application.MyApplication
@@ -14,8 +13,10 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.View
-import com.kotlin.sample.helper.SPHelper
+import com.ilabs.sample.myapplication.logException
+import com.ilabs.sample.myapplication.logInfo
 import com.kotlin.sample.viewmodel.Injection
 import com.kotlin.sample.service.LocationService
 import com.kotlin.sample.viewmodel.VMAddress
@@ -31,6 +32,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mVMBook: VMBook
     private lateinit var mVMApp: VMApp
     private lateinit var mVMFactory: VMFactory
+
+    private fun doSomething(){
+        logInfo("doSomething execution started")    // prints the log by default in Debug mode only, Also No need to put TAG
+
+        // message with TAG as MainActivity with throwable , print log for both debug & release builds
+        logException("doSomething execution Exception",throwable = Throwable("something error"), isOnlyForDebug = false)
+
+        // message with TAG as DIFFERENT_TAG with throwable  & will print for both debug & release builds.
+        logException("doSomething execution Exception","DIFFERENT_TAG")
+    }
 
     private fun updateUserName() {
         val userName = et_name.text.toString()
