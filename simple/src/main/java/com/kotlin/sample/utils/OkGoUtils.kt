@@ -11,7 +11,7 @@ import java.io.File
 /**
  * Created by anna on 2017/12/21.
  */
-object HttpUtils {
+object OkGoUtils {
 
     fun getRequest(url: String, callback: StringCallback, tag: Object) {
         OkGo.get<String>(url).tag(tag).execute(callback)
