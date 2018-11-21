@@ -15,6 +15,10 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
 
+        var intent = getIntent()
+        Log.d("debug", intent.getStringExtra("first_key"))
+
+
         var mVMFactory = Injection.provideViewModelFactory(this)
         var mVMApp = ViewModelProviders.of(this, mVMFactory).get(VMApp::class.java)
 
