@@ -17,9 +17,6 @@ import android.util.Log
 import android.view.View
 import com.ilabs.sample.myapplication.logException
 import com.ilabs.sample.myapplication.logInfo
-import com.kotlin.sample.extensions.DelegateSharedPref
-import com.kotlin.sample.extensions.Example
-import com.kotlin.sample.extensions.startActivityWithData
 import com.kotlin.sample.viewmodel.Injection
 import com.kotlin.sample.service.LocationService
 import com.kotlin.sample.viewmodel.VMAddress
@@ -36,27 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mVMApp: VMApp
     private lateinit var mVMFactory: VMFactory
 
-    private var notificationCount: Int by DelegateSharedPref(defaultValue = 5)
-
-    private fun doSomeSharedPreference(){
-        this.notificationCount = 2  // just set & get like a variable
-
-
-        startActivityWithData<UserActivity>( "first_key" to "firstValue" , "second_key" to 2 , "third_key" to 3.0f)
-
-//        val e = Example()
-//        Log.d("debug","e.p=${e.p}")
-//
-//        e.p = "NEW"
-//
-//        Log.d("debug","e.pp=${e.p}")
-//
-//
-//        Log.d("debug","updated notification counter is 2 , value is retained even after app is restarted")
-//        Log.d("debug","notificationCount=$notificationCount")
-    }
-
-    private fun doSomeLogs(){
+    private fun doSomething(){
         logInfo("doSomething execution started")    // prints the log by default in Debug mode only, Also No need to put TAG
 
         // message with TAG as MainActivity with throwable , print log for both debug & release builds
@@ -169,8 +146,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        doSomeSharedPreference()
 
         tv_name.text = "abc"
 
